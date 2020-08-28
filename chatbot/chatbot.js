@@ -15,24 +15,29 @@ const sessionPath = sessionClient.sessionPath(config.googleProjectID, config.dia
 
 module.exports = {
     textQuery: async function( text, parameters ={} ){
-        let self = module.exports;
-        const request = {
-            session: sessionPath,
-            queryInput: {
-                text: {
-                    text: text,
-                    languageCode: config.dialogFlowSessionLanguageCode
+        try{
+            let self = module.exports;
+            const request = {
+                session: sessionPath,
+                queryInput: {
+                    text: {
+                        text: text,
+                        languageCode: config.dialogFlowSessionLanguageCode
+                    },
                 },
-            },
-            queryParams: {
-                payload:{
-                    data: parameters
+                queryParams: {
+                    payload:{
+                        data: parameters
+                    }
                 }
-            }
-        };
-        let responses = await sessionClient.detectIntent(request);
-        responses = await self.handleAction(responses);
-        return responses;
+            };
+            let responses = await sessionClient.detectIntent(request);
+            responses = await self.handleAction(responses);
+            return responses;
+        } catch (error) {
+            console.error(error)
+            process.exit(1)
+        }
     },
 
     eventQuery: async function( event, parameters ={} ){
